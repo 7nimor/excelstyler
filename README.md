@@ -18,7 +18,7 @@ import openpyxl
 output = BytesIO()
 workbook = Workbook()
 worksheet = workbook.active
-worksheet.sheet_view.rightToLeft = True   # if you iranain else False
+worksheet.sheet_view.rightToLeft = True   # if you iranian else False
 worksheet.insert_rows(1)
 create_header(ws, ["Name", "Score"], 1, 1, color='green')
 workbook.save(output)
@@ -28,7 +28,7 @@ response = HttpResponse(
   content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 response[
   'Content-Disposition'] = f'attachment; filename="test file.xlsx"'.encode(
-  'utf-8')
+  'utf-8') # support from persian
 response.write(output.getvalue())
 return response
 ```
