@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import jdatetime
 
 
@@ -18,3 +20,17 @@ def shamsi_date(date, in_value=None):
         separate = "-"
         sh_date = separate.join(reversed_date)
     return sh_date
+
+
+def convert_str_to_date(string):
+    string = str(string).strip()
+    try:
+        return datetime.strptime(string, '%Y-%m-%dT%H:%M:%S.%fZ').date()
+    except ValueError:
+        try:
+            return datetime.strptime(string, '%Y-%m-%dT%H:%M:%SZ').date()  # Added format without milliseconds
+        except ValueError:
+            try:
+                return datetime.strptime(string, '%Y-%m-%d').date()
+            except ValueError:
+                return None
