@@ -15,10 +15,22 @@ from excelstyler.headers import create_header
 
 import openpyxl
 
-wb = openpyxl.Workbook()
-ws = wb.active
+output = BytesIO()
+workbook = Workbook()
+worksheet = workbook.active
+worksheet.sheet_view.rightToLeft = True   # if you iranain else False
+worksheet.insert_rows(1)
 create_header(ws, ["Name", "Score"], 1, 1, color='green')
-wb.save("example.xlsx")
+workbook.save(output)
+output.seek(0)
+
+response = HttpResponse(
+  content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+response[
+  'Content-Disposition'] = f'attachment; filename="test file.xlsx"'.encode(
+  'utf-8')
+response.write(output.getvalue())
+return response
 ```
 
 ## License
