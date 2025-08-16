@@ -8,8 +8,8 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from openpyxl import Workbook
 from rest_framework.decorators import api_view, permission_classes
 
-from src.excelstyler import create_value
-from src.excelstyler.headers import create_header_freez
+from excelstyler.values import create_value
+from excelstyler.headers import create_header_freez
 
 
 def test_header_creation():
