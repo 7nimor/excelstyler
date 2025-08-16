@@ -49,7 +49,7 @@ def create_header(
             else:
                 cell.fill = PatternFill(start_color=color, fill_type="solid")
         else:
-            cell.fill = GREEN_CELL
+            cell.fill = CREAM_CELL
         if text_color is not None:
             cell.font = Font(size=9, bold=True, color=text_color)
         else:
@@ -109,14 +109,12 @@ def create_header_freez(
         col_letter = get_column_letter(col_num)
         cell = worksheet.cell(row=row, column=col_num, value=option)
         cell.alignment = Alignment_CELL
-        cell.fill = blue_fill
+        cell.fill = LIGHT_CREAM_CELL
         if color is not None:
             if color in color_dict:
                 cell.fill = color_dict[color]
             else:
                 cell.fill = PatternFill(start_color=color, fill_type="solid")
-        else:
-            cell.fill = GREEN_CELL
 
         if height is not None:
             worksheet.row_dimensions[row].height = height

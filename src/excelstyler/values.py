@@ -6,7 +6,7 @@ from .styles import *
 
 
 def create_value(worksheet, data, start_col, row, border_style=None, m=None, height=None, color=None, width=None,
-                 different_cell=None, different_value=None, item_num=None, item_color=None):
+                 different_cell=None, different_value=None, item_num=None, item_color=None, m_color=None):
     """
       Write a list of values into an Excel worksheet with optional formatting.
 
@@ -67,8 +67,11 @@ def create_value(worksheet, data, start_col, row, border_style=None, m=None, hei
 
         cell.font = Font(size=10, bold=True)
 
-        if m is not None and m % 2 != 0:
-            cell.fill = PatternFill(start_color="D6F6FE", fill_type="solid")
+        if m is not None and m % 2 == 0:
+            if m_color:
+                cell.fill = PatternFill(start_color=m_color, fill_type="solid")
+            else:
+                cell.fill = PatternFill(start_color=VERY_LIGHT_CREAM_CELL, fill_type="solid")
 
         if height is not None:
             worksheet.row_dimensions[start_col + 1].height = height

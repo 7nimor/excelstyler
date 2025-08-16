@@ -13,6 +13,10 @@ ORANGE_CELL = PatternFill(start_color="FFC000", fill_type="solid")
 BLUE_CELL = PatternFill(start_color="538DD5", fill_type="solid")
 LIGHT_GREEN_CELL = PatternFill(start_color="92D050", fill_type="solid")
 VERY_LIGHT_GREEN_CELL = PatternFill(start_color="5AFC56", fill_type="solid")
+GRAY_CELL = PatternFill(start_color="B0B0B0", fill_type="solid")
+CREAM_CELL = PatternFill(start_color="D8AA72", fill_type="solid")
+LIGHT_CREAM_CELL = PatternFill(start_color="E8C6A0", fill_type="solid")
+VERY_LIGHT_CREAM_CELL = PatternFill(start_color="FAF0E7", fill_type="solid")
 
 # Dictionary to map color names to PatternFill objects
 color_dict = {
@@ -21,5 +25,6 @@ color_dict = {
     'blue': BLUE_CELL,
     'red': RED_CELL,
     'light_green': LIGHT_GREEN_CELL,
-    'very_light_green': VERY_LIGHT_GREEN_CELL
+    'very_light_green': VERY_LIGHT_GREEN_CELL,
+    'gray': GRAY_CELL
 }
