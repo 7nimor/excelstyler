@@ -69,7 +69,7 @@ def create_header(
 
 def create_header_freez(
         worksheet, data, start_col, row, header_row, height=None, width=None, len_with=None,
-        different_cell=None, color=None
+        different_cell=None, color=None, border_style=None
 ):
     """
     Create a styled header row in an Excel worksheet with freeze panes and auto-filter.
@@ -97,6 +97,8 @@ def create_header_freez(
     color : str, optional
         Background color for the header cells. Can be a key in `color_dict` or a hex color string.
         Default is `GREEN_CELL`.
+    border_style : str, optional
+        Border style to apply to each header cell (e.g., 'thin', 'medium').
 
     Notes:
     ------
@@ -132,3 +134,10 @@ def create_header_freez(
         max_col = worksheet.max_column
         range_str = f'A{header_row - 1}:{get_column_letter(max_col)}{worksheet.max_row}'
         worksheet.auto_filter.ref = range_str
+        if border_style is not None:
+            cell.border = openpyxl.styles.Border(
+                left=openpyxl.styles.Side(style=border_style),
+                right=openpyxl.styles.Side(style=border_style),
+                top=openpyxl.styles.Side(style=border_style),
+                bottom=openpyxl.styles.Side(style=border_style)
+            )

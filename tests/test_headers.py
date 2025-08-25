@@ -4,12 +4,11 @@ import openpyxl
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from excelstyler.headers import create_header
+from excelstyler.headers import create_header_freez
+from excelstyler.values import create_value
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from openpyxl import Workbook
 from rest_framework.decorators import api_view, permission_classes
-
-from excelstyler.values import create_value
-from excelstyler.headers import create_header_freez
 
 
 def test_header_creation():
@@ -19,7 +18,7 @@ def test_header_creation():
     assert ws.cell(1, 1).value == "A"
 
 
-@api_view(["POST"])
+@api_view(["GET"])
 @permission_classes([TokenHasReadWriteScope])
 @csrf_exempt
 def test_cold_house_excel(request):
@@ -43,7 +42,7 @@ def test_cold_house_excel(request):
         'Total Weight', 'Allocated Weight', 'Remaining Weight',
         'Status', 'Broadcast', 'Relocate', 'Capacity'
     ]
-    create_header_freez(worksheet, header, start_col=1, row=2, header_row=3)
+    create_header_freez(worksheet, header, start_col=1, row=2, header_row=3, height=25, width=18)
 
     # --- Example Data ---
     # Here we use some mock data for testing
@@ -77,7 +76,6 @@ def test_cold_house_excel(request):
     # --- Fill Data ---
     row_index = 3
     for i, house in enumerate(example_data, start=1):
-        row_index += 1
         values = [
             i,
             house['name'],
@@ -92,6 +90,7 @@ def test_cold_house_excel(request):
             house['capacity']
         ]
         create_value(worksheet, values, start_col=row_index, row=1)
+        row_index += 1
 
     # --- Save and Response ---
     workbook.save(output)

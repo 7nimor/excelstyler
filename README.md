@@ -35,7 +35,7 @@ return response
 
 
 #Example
-@api_view(["POST"])
+@api_view(["GET"])
 @permission_classes([TokenHasReadWriteScope])
 @csrf_exempt
 def test_cold_house_excel(request):
@@ -59,7 +59,7 @@ def test_cold_house_excel(request):
         'Total Weight', 'Allocated Weight', 'Remaining Weight',
         'Status', 'Broadcast', 'Relocate', 'Capacity'
     ]
-    create_header_freez(worksheet, header, start_col=1, row=2, header_row=3)
+    create_header_freez(worksheet, header, start_col=1, row=2, header_row=3, height=25, width=18)
 
     # --- Example Data ---
     # Here we use some mock data for testing
@@ -91,7 +91,7 @@ def test_cold_house_excel(request):
     ]
 
     # --- Fill Data ---
-    row_index = 4
+    row_index = 3
     for i, house in enumerate(example_data, start=1):
         values = [
             i,
