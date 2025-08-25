@@ -91,9 +91,8 @@ def test_cold_house_excel(request):
     ]
 
     # --- Fill Data ---
-    row_index = 3
+    row_index = 4
     for i, house in enumerate(example_data, start=1):
-        row_index += 1
         values = [
             i,
             house['name'],
@@ -108,6 +107,8 @@ def test_cold_house_excel(request):
             house['capacity']
         ]
         create_value(worksheet, values, start_col=row_index, row=1)
+        row_index += 1
+
 
     # --- Save and Response ---
     workbook.save(output)
