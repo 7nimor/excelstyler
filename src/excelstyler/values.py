@@ -1,5 +1,5 @@
 import openpyxl
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Font, Border, Side
 from openpyxl.utils import get_column_letter
 
 from .styles import *
@@ -52,11 +52,11 @@ def create_value(worksheet, data, start_col, row, border_style=None, m=None, hei
         cell.alignment = Alignment_CELL
 
         if border_style:
-            cell.border = openpyxl.styles.Border(
-                left=openpyxl.styles.Side(style=border_style),
-                right=openpyxl.styles.Side(style=border_style),
-                top=openpyxl.styles.Side(style=border_style),
-                bottom=openpyxl.styles.Side(style=border_style)
+            cell.border = Border(
+                left=Side(style=border_style),
+                right=Side(style=border_style),
+                top=Side(style=border_style),
+                bottom=Side(style=border_style)
             )
 
         value = data[item]
@@ -71,14 +71,17 @@ def create_value(worksheet, data, start_col, row, border_style=None, m=None, hei
             if m_color:
                 cell.fill = PatternFill(start_color=m_color, fill_type="solid")
             else:
-                cell.fill = PatternFill(start_color=VERY_LIGHT_CREAM_CELL, fill_type="solid")
+                cell.fill = VERY_LIGHT_CREAM_CELL
 
         if height is not None:
             worksheet.row_dimensions[start_col + 1].height = height
 
         if item_num is not None and item == item_num:
             if item_color:
-                cell.fill = item_color
+                if isinstance(item_color, str) and item_color in color_dict:
+                    cell.fill = color_dict[item_color]
+                else:
+                    cell.fill = item_color
         elif color in color_dict:
             cell.fill = color_dict[color]
 
@@ -86,4 +89,5 @@ def create_value(worksheet, data, start_col, row, border_style=None, m=None, hei
             cell.fill = RED_CELL
 
         if width is not None:
-            worksheet.column_dimensions[openpyxl.utils.get_column_letter(item + row)].width = width
+            col_letter = get_column_letter(item + row)
+            worksheet.column_dimensions[col_letter].width = width

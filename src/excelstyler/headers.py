@@ -1,5 +1,5 @@
 import openpyxl
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Font, Border, Side
 from openpyxl.utils import get_column_letter
 
 from .styles import *
@@ -33,12 +33,27 @@ def create_header(
     border_style : str, optional
         Border style to apply to each header cell (e.g., 'thin', 'medium').
 
+    Raises:
+    -------
+    ValueError
+        If required parameters are None or invalid.
+    TypeError
+        If data is not a list or worksheet is not a valid worksheet object.
+
     Notes:
     ------
     - All header cells are center-aligned and bold by default.
     - If `color` is in `color_dict`, the corresponding PatternFill is used.
     - This function is useful for creating consistent, styled headers in Excel reports.
     """
+    if worksheet is None:
+        raise ValueError("Worksheet cannot be None")
+    if data is None or not isinstance(data, list) or len(data) == 0:
+        raise ValueError("Data must be a non-empty list")
+    if start_col is None or row is None:
+        raise ValueError("start_col and row cannot be None")
+    if start_col < 1 or row < 1:
+        raise ValueError("start_col and row must be positive integers")
     for col_num, option in enumerate(data, start_col):
         cell = worksheet.cell(row=row, column=col_num, value=option)
         col_letter = get_column_letter(col_num)
@@ -59,11 +74,11 @@ def create_header(
         if width is not None:
             worksheet.column_dimensions[col_letter].width = width
         if border_style is not None:
-            cell.border = openpyxl.styles.Border(
-                left=openpyxl.styles.Side(style=border_style),
-                right=openpyxl.styles.Side(style=border_style),
-                top=openpyxl.styles.Side(style=border_style),
-                bottom=openpyxl.styles.Side(style=border_style)
+            cell.border = Border(
+                left=Side(style=border_style),
+                right=Side(style=border_style),
+                top=Side(style=border_style),
+                bottom=Side(style=border_style)
             )
 
 
@@ -135,9 +150,9 @@ def create_header_freez(
         range_str = f'A{header_row - 1}:{get_column_letter(max_col)}{worksheet.max_row}'
         worksheet.auto_filter.ref = range_str
         if border_style is not None:
-            cell.border = openpyxl.styles.Border(
-                left=openpyxl.styles.Side(style=border_style),
-                right=openpyxl.styles.Side(style=border_style),
-                top=openpyxl.styles.Side(style=border_style),
-                bottom=openpyxl.styles.Side(style=border_style)
+            cell.border = Border(
+                left=Side(style=border_style),
+                right=Side(style=border_style),
+                top=Side(style=border_style),
+                bottom=Side(style=border_style)
             )

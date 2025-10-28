@@ -1,4 +1,5 @@
 from .styles import *
+from openpyxl.styles import Font, PatternFill
 
 
 def excel_description(worksheet, from_row, description, size=None, color=None, my_color=None, to_row=None):
@@ -35,11 +36,13 @@ def excel_description(worksheet, from_row, description, size=None, color=None, m
     worksheet[from_row] = description
     worksheet[from_row].alignment = Alignment_CELL
     if size is not None:
-        worksheet[from_row].font = Font(size=size)
-    if color is not None:
+        worksheet[from_row].font = Font(size=size, bold=True)
+    elif color is not None:
         worksheet[from_row].font = red_font
+    else:
+        worksheet[from_row].font = Font(size=10, bold=True)
     if my_color is not None:
-        worksheet[from_row].font = PatternFill(start_color=my_color, fill_type="solid")
+        worksheet[from_row].fill = PatternFill(start_color=my_color, fill_type="solid")
 
     if to_row is not None:
         merge_range = f'{from_row}:{to_row}'

@@ -25,27 +25,38 @@ def shamsi_date(date, in_value=None):
     jdatetime.date or str
         The Shamsi date, either as an object or a string depending on `in_value`.
 
+    Raises:
+    -------
+    ValueError
+        If the input date is invalid or None.
+
     Note:
     -----
     Setting `in_value=True` is useful when you want to write the date directly
     into Excel cell values, while `in_value=False` is for formatted text display.
     """
-    if in_value:
-        sh_date = jdatetime.date.fromgregorian(
-            year=date.year,
-            month=date.month,
-            day=date.day
-        )
-    else:
-        miladi_date = jdatetime.date.fromgregorian(
-            year=date.year,
-            month=date.month,
-            day=date.day
-        ).strftime('%Y-%m-%d')
-        reversed_date = reversed(miladi_date.split("-"))
-        separate = "-"
-        sh_date = separate.join(reversed_date)
-    return sh_date
+    if date is None:
+        raise ValueError("Date cannot be None")
+    
+    try:
+        if in_value:
+            sh_date = jdatetime.date.fromgregorian(
+                year=date.year,
+                month=date.month,
+                day=date.day
+            )
+        else:
+            miladi_date = jdatetime.date.fromgregorian(
+                year=date.year,
+                month=date.month,
+                day=date.day
+            ).strftime('%Y-%m-%d')
+            reversed_date = reversed(miladi_date.split("-"))
+            separate = "-"
+            sh_date = separate.join(reversed_date)
+        return sh_date
+    except (ValueError, AttributeError) as e:
+        raise ValueError(f"Invalid date format: {e}")
 
 
 def convert_str_to_date(string):

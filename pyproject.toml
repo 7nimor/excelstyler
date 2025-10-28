@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "excelstyler"
-version = "0.1.1"
+version = "0.1.2"
 description = "Style and format Excel files easily with openpyxl"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -21,6 +21,12 @@ classifiers = [
 dependencies = [
     "openpyxl>=3.0.10",
     "jdatetime>=4.1.0"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=6.0.0",
+    "pytest-cov>=2.0.0"
 ]
 
 [project.urls]

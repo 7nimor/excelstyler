@@ -1,103 +1,111 @@
-from io import BytesIO
-
+import pytest
 import openpyxl
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from excelstyler.headers import create_header
-from excelstyler.headers import create_header_freez
-from excelstyler.values import create_value
-from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from openpyxl import Workbook
-from rest_framework.decorators import api_view, permission_classes
+from excelstyler.headers import create_header, create_header_freez
 
 
-def test_header_creation():
-    wb = openpyxl.Workbook()
-    ws = wb.active
-    create_header(ws, ["A", "B"], 1, 1)
-    assert ws.cell(1, 1).value == "A"
+class TestCreateHeader:
+    """Test cases for create_header function."""
+    
+    def setup_method(self):
+        """Set up test workbook and worksheet."""
+        self.workbook = Workbook()
+        self.worksheet = self.workbook.active
+    
+    def test_create_header_basic(self):
+        """Test basic header creation."""
+        data = ["Name", "Age", "City"]
+        create_header(self.worksheet, data, 1, 1)
+        
+        assert self.worksheet.cell(1, 1).value == "Name"
+        assert self.worksheet.cell(1, 2).value == "Age"
+        assert self.worksheet.cell(1, 3).value == "City"
+    
+    def test_create_header_with_color(self):
+        """Test header creation with color."""
+        data = ["Name", "Age"]
+        create_header(self.worksheet, data, 1, 1, color="green")
+        
+        # Check that cells have green fill
+        assert self.worksheet.cell(1, 1).fill.start_color.index == "0000B050"
+        assert self.worksheet.cell(1, 2).fill.start_color.index == "0000B050"
+    
+    def test_create_header_with_height_width(self):
+        """Test header creation with height and width."""
+        data = ["Name", "Age"]
+        create_header(self.worksheet, data, 1, 1, height=30, width=15)
+        
+        assert self.worksheet.row_dimensions[1].height == 30
+        assert self.worksheet.column_dimensions['A'].width == 15
+        assert self.worksheet.column_dimensions['B'].width == 15
+    
+    def test_create_header_with_border(self):
+        """Test header creation with border."""
+        data = ["Name", "Age"]
+        create_header(self.worksheet, data, 1, 1, border_style="thin")
+        
+        # Check that cells have borders
+        assert self.worksheet.cell(1, 1).border.left.style == "thin"
+        assert self.worksheet.cell(1, 2).border.left.style == "thin"
+    
+    def test_create_header_none_worksheet(self):
+        """Test create_header with None worksheet raises ValueError."""
+        with pytest.raises(ValueError, match="Worksheet cannot be None"):
+            create_header(None, ["Name"], 1, 1)
+    
+    def test_create_header_none_data(self):
+        """Test create_header with None data raises ValueError."""
+        with pytest.raises(ValueError, match="Data must be a non-empty list"):
+            create_header(self.worksheet, None, 1, 1)
+    
+    def test_create_header_empty_data(self):
+        """Test create_header with empty data raises ValueError."""
+        with pytest.raises(ValueError, match="Data must be a non-empty list"):
+            create_header(self.worksheet, [], 1, 1)
+    
+    def test_create_header_invalid_start_col(self):
+        """Test create_header with invalid start_col raises ValueError."""
+        with pytest.raises(ValueError, match="start_col and row must be positive integers"):
+            create_header(self.worksheet, ["Name"], 0, 1)
+    
+    def test_create_header_invalid_row(self):
+        """Test create_header with invalid row raises ValueError."""
+        with pytest.raises(ValueError, match="start_col and row must be positive integers"):
+            create_header(self.worksheet, ["Name"], 1, 0)
 
 
-@api_view(["GET"])
-@permission_classes([TokenHasReadWriteScope])
-@csrf_exempt
-def test_cold_house_excel(request):
-    """
-    A simplified example Excel report for Cold Houses.
-    Excel output support Persian name.
-    """
-
-    # --- Excel Setup ---
-    output = BytesIO()
-    workbook = Workbook()
-    worksheet = workbook.active
-    workbook.remove(worksheet)
-    worksheet = workbook.create_sheet("Cold House Info")
-    worksheet.sheet_view.rightToLeft = True
-    worksheet.insert_rows(1)
-
-    # --- Header ---
-    header = [
-        'Row', 'Cold House Name', 'City', 'Address',
-        'Total Weight', 'Allocated Weight', 'Remaining Weight',
-        'Status', 'Broadcast', 'Relocate', 'Capacity'
-    ]
-    create_header_freez(worksheet, header, start_col=1, row=2, header_row=3, height=25, width=18)
-
-    # --- Example Data ---
-    # Here we use some mock data for testing
-    example_data = [
-        {
-            'name': 'Cold House A',
-            'city': 'Tehran',
-            'address': 'Street 1',
-            'total_input_weight': 1000,
-            'total_allocated_weight': 700,
-            'total_remain_weight': 300,
-            'status': True,
-            'broadcast': False,
-            'relocate': True,
-            'capacity': 1200
-        },
-        {
-            'name': 'Cold House B',
-            'city': 'Shiraz',
-            'address': 'Street 2',
-            'total_input_weight': 800,
-            'total_allocated_weight': 500,
-            'total_remain_weight': 300,
-            'status': False,
-            'broadcast': True,
-            'relocate': False,
-            'capacity': 1000
-        }
-    ]
-
-    # --- Fill Data ---
-    row_index = 3
-    for i, house in enumerate(example_data, start=1):
-        values = [
-            i,
-            house['name'],
-            house['city'],
-            house['address'],
-            house['total_input_weight'],
-            house['total_allocated_weight'],
-            house['total_remain_weight'],
-            'Active' if house['status'] else 'Inactive',
-            'Yes' if house['broadcast'] else 'No',
-            'Yes' if house['relocate'] else 'No',
-            house['capacity']
-        ]
-        create_value(worksheet, values, start_col=row_index, row=1)
-        row_index += 1
-
-    # --- Save and Response ---
-    workbook.save(output)
-    output.seek(0)
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = 'attachment; filename="ColdHouseExample.xlsx"'
-    response.write(output.getvalue())
-    return response
+class TestCreateHeaderFreez:
+    """Test cases for create_header_freez function."""
+    
+    def setup_method(self):
+        """Set up test workbook and worksheet."""
+        self.workbook = Workbook()
+        self.worksheet = self.workbook.active
+    
+    def test_create_header_freez_basic(self):
+        """Test basic frozen header creation."""
+        data = ["Name", "Age", "City"]
+        create_header_freez(self.worksheet, data, 1, 2, 3)
+        
+        assert self.worksheet.cell(2, 1).value == "Name"
+        assert self.worksheet.cell(2, 2).value == "Age"
+        assert self.worksheet.cell(2, 3).value == "City"
+        
+        # Check freeze panes
+        assert self.worksheet.freeze_panes == "A3"
+    
+    def test_create_header_freez_with_auto_filter(self):
+        """Test frozen header with auto filter."""
+        data = ["Name", "Age"]
+        create_header_freez(self.worksheet, data, 1, 2, 3)
+        
+        # Check auto filter is applied
+        assert self.worksheet.auto_filter.ref is not None
+    
+    def test_create_header_freez_with_different_cell(self):
+        """Test frozen header with different cell highlighting."""
+        data = ["Name", "Age", "Status"]
+        create_header_freez(self.worksheet, data, 1, 2, 3, different_cell="Status")
+        
+        # Check that Status cell has red fill
+        assert self.worksheet.cell(2, 3).fill.start_color.index == "00C00000"
