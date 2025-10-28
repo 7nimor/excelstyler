@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2025-01-27
+
+### Added
+- Added PyPI badges to README (version, downloads, Python version, license)
+- Added comprehensive SEO keywords (persian, farsi, shamsi, iranian)
+- Added detailed classifiers for better PyPI categorization
+- Added robots.txt for search engine optimization
+- Added SEO strategy documentation
+- Enhanced README with better description for Iranian developers
+
+### Improved
+- Better discoverability in search engines
+- Enhanced PyPI package metadata
+- Improved SEO optimization
+- Better categorization on PyPI
+
 ## [0.1.2] - 2025-01-27
 
 ### Fixed
