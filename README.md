@@ -1,6 +1,13 @@
 # excelstyler
 
+[![PyPI version](https://badge.fury.io/py/excelstyler.svg)](https://badge.fury.io/py/excelstyler)
+[![Downloads](https://pepy.tech/badge/excelstyler)](https://pepy.tech/project/excelstyler)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 `excelstyler` is a Python package that makes it easy to style and format Excel worksheets using [openpyxl](https://openpyxl.readthedocs.io). It provides a simple API for creating professional-looking Excel reports with Persian/Farsi language support.
+
+**Perfect for Iranian developers** who need to create Excel reports with Persian dates, RTL text support, and professional styling.
 
 ## Features
 
